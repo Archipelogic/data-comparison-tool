@@ -38,10 +38,16 @@ class VisualizationEngine:
         for idx, (name, data) in enumerate(data_dict.items()):
             color = self.color_palette[idx % len(self.color_palette)]
             
+            # Convert to list to ensure compatibility
+            if hasattr(data, 'values'):
+                data_values = data.values
+            else:
+                data_values = data
+                
             if data_type == DataType.NUMERIC:
                 # Create histogram for numeric data
                 fig.add_trace(go.Histogram(
-                    x=data,
+                    x=data_values,
                     name=name,
                     opacity=0.7,
                     marker_color=color,
@@ -49,10 +55,10 @@ class VisualizationEngine:
                 ))
             else:
                 # Create bar chart for categorical data
-                value_counts = pd.Series(data).value_counts()
+                value_counts = pd.Series(data_values).value_counts().head(20)
                 fig.add_trace(go.Bar(
-                    x=value_counts.index[:20],  # Top 20 categories
-                    y=value_counts.values[:20],
+                    x=list(value_counts.index),
+                    y=list(value_counts.values),
                     name=name,
                     marker_color=color,
                     opacity=0.7
