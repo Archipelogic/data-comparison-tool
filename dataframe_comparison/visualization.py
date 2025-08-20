@@ -43,10 +43,9 @@ class VisualizationEngine:
                 fig.add_trace(go.Histogram(
                     x=data,
                     name=name,
-                    opacity=0.5,  # Reduced opacity for better overlay visibility
+                    opacity=0.7,
                     marker_color=color,
-                    nbinsx=30,
-                    marker_line=dict(width=1, color='rgba(0,0,0,0.3)')  # Add subtle border
+                    nbinsx=30
                 ))
             else:
                 # Create bar chart for categorical data
@@ -56,8 +55,7 @@ class VisualizationEngine:
                     y=value_counts.values[:20],
                     name=name,
                     marker_color=color,
-                    opacity=0.5,  # Reduced opacity for better overlay visibility
-                    marker_line=dict(width=1, color='rgba(0,0,0,0.3)')  # Add subtle border
+                    opacity=0.7
                 ))
                 
         # Update layout
