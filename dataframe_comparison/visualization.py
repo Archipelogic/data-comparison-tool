@@ -38,11 +38,15 @@ class VisualizationEngine:
         for idx, (name, data) in enumerate(data_dict.items()):
             color = self.color_palette[idx % len(self.color_palette)]
             
-            # Convert to list to ensure compatibility
-            if hasattr(data, 'values'):
-                data_values = data.values
+            # Convert to proper format for Plotly
+            if isinstance(data, pd.Series):
+                data_values = data.values.tolist()
+            elif hasattr(data, 'values'):
+                data_values = data.values.tolist()
+            elif isinstance(data, np.ndarray):
+                data_values = data.tolist()
             else:
-                data_values = data
+                data_values = list(data)
                 
             if data_type == DataType.NUMERIC:
                 # Create histogram for numeric data
@@ -57,8 +61,8 @@ class VisualizationEngine:
                 # Create bar chart for categorical data
                 value_counts = pd.Series(data_values).value_counts().head(20)
                 fig.add_trace(go.Bar(
-                    x=list(value_counts.index),
-                    y=list(value_counts.values),
+                    x=value_counts.index.tolist(),
+                    y=value_counts.values.tolist(),
                     name=name,
                     marker_color=color,
                     opacity=0.7
@@ -104,12 +108,12 @@ class VisualizationEngine:
         corr_matrix = df[numeric_cols].corr()
         
         fig = go.Figure(data=go.Heatmap(
-            z=corr_matrix.values,
-            x=corr_matrix.columns,
-            y=corr_matrix.columns,
+            z=corr_matrix.values.tolist(),
+            x=corr_matrix.columns.tolist(),
+            y=corr_matrix.columns.tolist(),
             colorscale='RdBu',
             zmid=0,
-            text=corr_matrix.values.round(2),
+            text=corr_matrix.values.round(2).tolist(),
             texttemplate='%{text}',
             textfont={"size": 10},
             colorbar=dict(title="Correlation")
